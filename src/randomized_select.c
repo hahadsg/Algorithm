@@ -23,7 +23,6 @@ double randomized_select(double* a, int n, int r)
 	int i, j;
 	int gr, gr_c, rem;
 	double *tmp, med;
-	printf("a:%lf, n:%d, r:%d\n",*a,n,r);
 
 	// 递归回溯
 	if (n == 1)
@@ -33,19 +32,18 @@ double randomized_select(double* a, int n, int r)
 	gr = n / 5;
 	gr_c = ceil(n / 5.0);
 	rem = n % 5;
-	for (i = 0, tmp = a; i < gr; i++) {
+	for (i = 0, tmp = a; i < gr; i++, tmp+=5) {
 		insertion_sort(tmp, 5);
 	}
 	insertion_sort(tmp, rem);
 	tmp = (double*)malloc(gr_c * sizeof(double));
-	for (i = 0, j = 2; i < gr; i++) {
+	for (i = 0, j = 2; i < gr; i++, j+=5) {
 		tmp[i] = a[j];
 	}
 	if (rem) {
 		tmp[i] = a[n - 1 - rem/2];
 	}
 	med = randomized_select(tmp, gr_c, (gr-1)/2);
-	printf("med:%lf\n", med);
 	free(tmp);
 
 	// 分割数组
@@ -71,7 +69,7 @@ void static insertion_sort(double *a, int n)
 		for (j = i - 1; j >= 0 && a[j] > tmp; j--) {
 			a[j+1] = a[j];
 		}
-		a[j] = tmp;
+		a[j+1] = tmp;
 	}		
 }
 
