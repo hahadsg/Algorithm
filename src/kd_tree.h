@@ -17,5 +17,6 @@ typedef struct kd_node {
 } kd_node;
 
 kd_node* kd_tree_build(feature* features, int n);
+void kd_tree_free(kd_node* kd_root);
 
 #endif

@@ -34,6 +34,7 @@ void test_kd_tree(int argc, char **argv)
 
     kd_root = kd_tree_build(features, n);
     test_kd_tree_print(kd_root);
+    kd_tree_free(kd_root);
 }
 
 void test_kd_tree_print(kd_node* kd_root) 

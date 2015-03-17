@@ -25,6 +25,15 @@ kd_node* kd_tree_build(feature* features, int n)
     return kd_root;
 }
 
+void kd_tree_free(kd_node* kd_root)
+{
+	if (kd_root->left)
+		kd_tree_free(kd_root->left);
+	if (kd_root->right)
+		kd_tree_free(kd_root->right);
+	free(kd_root);
+}
+
 kd_node* init_kd_node(feature* features, int n)
 {
     kd_node *kd_root;
