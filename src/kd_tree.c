@@ -11,7 +11,9 @@ void expand_kd_tree(kd_node* kd_root);
 void assign_partition_key(kd_node* kd_root);
 void partition_features(kd_node* kd_root);
 
-
+/********************************************************************************/
+/* build */
+/********************************************************************************/
 kd_node* kd_tree_build(feature* features, int n)
 {
     kd_node *kd_root;
@@ -23,15 +25,6 @@ kd_node* kd_tree_build(feature* features, int n)
     expand_kd_tree(kd_root);
 
     return kd_root;
-}
-
-void kd_tree_free(kd_node* kd_root)
-{
-	if (kd_root->left)
-		kd_tree_free(kd_root->left);
-	if (kd_root->right)
-		kd_tree_free(kd_root->right);
-	free(kd_root);
 }
 
 kd_node* init_kd_node(feature* features, int n)
@@ -101,7 +94,7 @@ void assign_partition_key(kd_node* kd_root)
     for (i = 0; i < n; i++) {
         tmp[i] = features[i].descr[ki];
     }
-    kv = randomized_select(tmp, n, (n-1)/2);
+    kv = randomized_select(tmp, n, n/2);
     free(tmp);
 
     kd_root->ki = ki;
@@ -133,13 +126,21 @@ void partition_features(kd_node* kd_root)
     tmp = features[p];
     features[p] = features[j];
     features[j] = tmp;
-
-    if (j == n-1) { // ???
-        kd_root->leaf = 1;
-    }
     
     if (j)
         kd_root->left = init_kd_node(features, j);
     if (n-j-1)
         kd_root->right = init_kd_node(features+j+1, n-j-1);
+}
+
+/********************************************************************************/
+/* free */
+/********************************************************************************/
+void kd_tree_free(kd_node* kd_root)
+{
+    if (kd_root->left)
+        kd_tree_free(kd_root->left);
+    if (kd_root->right)
+        kd_tree_free(kd_root->right);
+    free(kd_root);
 }

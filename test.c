@@ -9,7 +9,7 @@
 void test_randomized_select(int argc, char **argv);
 /* kd_tree */
 void test_kd_tree(int argc, char **argv);
-void test_kd_tree_print(kd_node* kd_root);
+void test_kd_tree_print(kd_node* kd_root, int level);
 
 int main(int argc, char **argv)
 {
@@ -19,10 +19,10 @@ int main(int argc, char **argv)
 
 void test_kd_tree(int argc, char **argv) 
 {
-    double a[10][2] = {9,9,8,8,7,7,6,6,5,5,4,4,3,3,2,2,1,1,0,0};
+    int n = 6;
+    double a[6][2] = {{2,3}, {5,4}, {9,6}, {4,7}, {8,1}, {7,2}};
     feature *features;
     kd_node *kd_root;
-    int n = 10;
     int i, j;
 
     features = (feature*)malloc(n*sizeof(feature));
@@ -33,17 +33,20 @@ void test_kd_tree(int argc, char **argv)
     }
 
     kd_root = kd_tree_build(features, n);
-    test_kd_tree_print(kd_root);
+    test_kd_tree_print(kd_root, 1);
     kd_tree_free(kd_root);
 }
 
-void test_kd_tree_print(kd_node* kd_root) 
+void test_kd_tree_print(kd_node* kd_root, int level) 
 {
-    printf("n=%d,ki=%d,kv=%lf,leaf=%d\n",kd_root->n, kd_root->ki, kd_root->kv, kd_root->leaf);
+    feature feature;
+    feature = kd_root->features[kd_root->n/2];
+    printf("lv:%d, point:(%lf, %lf)\n", level, feature.descr[0], feature.descr[1]);
+    // printf("n=%d,ki=%d,kv=%lf,leaf=%d\n",kd_root->n, kd_root->ki, kd_root->kv, kd_root->leaf);
     if (kd_root->left)
-        test_kd_tree_print(kd_root->left);
+        test_kd_tree_print(kd_root->left, level+1);
     if (kd_root->right)
-        test_kd_tree_print(kd_root->right);
+        test_kd_tree_print(kd_root->right, level+1);
 }
 
 void test_randomized_select(int argc, char **argv) 
