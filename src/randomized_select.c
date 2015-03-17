@@ -4,8 +4,8 @@
 
  #include "randomized_select.h"
 
-void static insertion_sort(double *a, int n);
-int static partition_array(double *a, int n, double x);
+void insertion_sort(double *a, int n);
+int partition_array(double *a, int n, double x);
 
 /* 
  * 返回长度n的数组a第r个数据地址
@@ -20,7 +20,7 @@ double randomized_select(double* a, int n, int r)
     if (n == 1)
         return a[0];
 
-    /* 划分成5份 分别进行插入排序 选取每份的中位数 */
+    /* 划分成每段长度为5的小段 分别进行插入排序 选取每份的中位数 */
     gr = n / 5;
     gr_c = ceil(n / 5.0);
     rem = n % 5;
@@ -33,7 +33,7 @@ double randomized_select(double* a, int n, int r)
         tmp[i] = a[j];
     }
     if (rem) {
-        tmp[i] = a[n - 1 - rem/2];
+        tmp[i] = a[n - 1 - rem/2]; // 左中位数
     }
     med = randomized_select(tmp, gr_c, (gr-1)/2);
     free(tmp);
@@ -42,17 +42,17 @@ double randomized_select(double* a, int n, int r)
     j = partition_array(a, n, med);
     if (j == r) {
         return med;
-    } else if (j < r) {
-        return randomized_select(a+j+1, n-j, r-j);
-    } else {
+    } else if (j > r) {
         return randomized_select(a, j, r);
+    } else {
+        return randomized_select(a+j+1, n-j-1, r-j-1);
     }
 }
 
 /*
  * 插入排序
  */
-void static insertion_sort(double *a, int n)
+void insertion_sort(double *a, int n)
 {
     int i, j;
     double tmp;
@@ -68,20 +68,21 @@ void static insertion_sort(double *a, int n)
 /*
  * 分割数组 左边比x小 右边比x大
  */
-int static partition_array(double *a, int n, double x)
+int partition_array(double *a, int n, double x)
 {
     int i, j, pos;
     double tmp;
-    for (i = 0, j = 0; i < n; i++) {
+    for (i = 0, j = -1; i < n; i++) {
         if (a[i] <= x) {
+            j++;
             tmp = a[i];
             a[i] = a[j];
-            a[j++] = tmp;
-            if (a[i] == x) 
+            a[j] = tmp;
+            if (a[j] == x) 
                 pos = j;
         }
     }
-    a[pos] = a[j-1];
-    a[j-1] = x;
-    return j-1;
+    a[pos] = a[j];
+    a[j] = x;
+    return j;
 }
