@@ -112,8 +112,6 @@ void kd_tree_insert(kd_node* kd_root, point* p, int d)
     int split;
     double value;
 
-    printf("point:(%lf, %lf), split=%d\n", kd_root->point.v[0], kd_root->point.v[1], kd_root->split);
-
     if ( kd_root == NULL ) { // 树为空
         kd_root = (kd_node*)malloc(sizeof(kd_node));
         kd_root->point = *p;
