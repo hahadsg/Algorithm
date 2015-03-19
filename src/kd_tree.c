@@ -11,6 +11,7 @@ void partition_points(point* points, int n, int d, int split, double value);
 
 /********************************************************************************/
 /* build */
+/* O(k*n*logn) */
 /********************************************************************************/
 kd_node* kd_tree_build(point* points, int n, int d)
 {
@@ -22,8 +23,8 @@ kd_node* kd_tree_build(point* points, int n, int d)
         return NULL;
 
     kd_root = (kd_node*)malloc(sizeof(kd_node));
-	assign_split(points, n, d, &split, &value);
-	partition_points(points, n, d, split, value);
+    assign_split(points, n, d, &split, &value);
+    partition_points(points, n, d, split, value);
 
     kd_root->point = points[n/2];
     kd_root->split = split;
@@ -35,9 +36,9 @@ kd_node* kd_tree_build(point* points, int n, int d)
 
 void assign_split(point* points, int n, int d, int* split, double* value)
 {
-	int i, j;
-	double mean, var, max_var = -1;
-	double *tmp;
+    int i, j;
+    double mean, var, max_var = -1;
+    double *tmp;
 
     for (j = 0; j < d; j++) {
         mean = var = 0;
@@ -99,3 +100,52 @@ void kd_tree_free(kd_node* kd_root)
         kd_tree_free(kd_root->right);
     free(kd_root);
 }
+
+/********************************************************************************/
+/* insert */
+/* O(n) */
+/********************************************************************************/
+void kd_tree_insert(kd_node* kd_root, point* p, int d)
+{
+    kd_node *node, **turn_node;
+    point *points;
+    int split;
+    double value;
+
+    printf("point:(%lf, %lf), split=%d\n", kd_root->point.v[0], kd_root->point.v[1], kd_root->split);
+
+    if ( kd_root == NULL ) { // 树为空
+        kd_root = (kd_node*)malloc(sizeof(kd_node));
+        kd_root->point = *p;
+        kd_root->split = 0;
+        kd_root->left = kd_root->right = NULL;
+        return ;
+    }
+
+    split = kd_root->split;
+
+    if (kd_root->left == NULL && kd_root->right == NULL) { // 如果是叶子节点 调整其split
+        points = (point*)malloc(2 * sizeof(point));
+        points[0] = kd_root->point;
+        points[1] = *p;
+        assign_split(points, 2, d, &split, &value);
+        kd_root->split = split;
+    }
+
+    if (p->v[split] < kd_root->point.v[split]) {
+        turn_node = &(kd_root->left);
+    } else {
+        turn_node = &(kd_root->right);
+    }
+
+    if ( (*turn_node) == NULL ) {
+        node = (kd_node*)malloc(sizeof(kd_node));
+        node->split = 0;
+        node->point = *p;
+        node->left = node->right = NULL;
+        *turn_node = node;
+    } else {
+        kd_tree_insert(*turn_node, p, d);
+    }
+}
+
