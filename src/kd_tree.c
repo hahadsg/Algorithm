@@ -6,131 +6,86 @@
 
 #define SQUARE(x) ((x)*(x))
 
-kd_node* init_kd_node(feature* features, int n);
-void expand_kd_tree(kd_node* kd_root);
-void assign_partition_key(kd_node* kd_root);
-void partition_features(kd_node* kd_root);
+void assign_split(point* points, int n, int d, int* split, double* value);
+void partition_points(point* points, int n, int d, int split, double value);
 
 /********************************************************************************/
 /* build */
 /********************************************************************************/
-kd_node* kd_tree_build(feature* features, int n)
+kd_node* kd_tree_build(point* points, int n, int d)
 {
     kd_node *kd_root;
+    int split = -1;
+    double value;
 
-    if ( !features || n <= 0 )
+    if ( n <= 0 )
         return NULL;
 
-    kd_root = init_kd_node(features, n);
-    expand_kd_tree(kd_root);
-
-    return kd_root;
-}
-
-kd_node* init_kd_node(feature* features, int n)
-{
-    kd_node *kd_root;
-
     kd_root = (kd_node*)malloc(sizeof(kd_node));
-    kd_root->ki = -1;
-    kd_root->kv = 0;
-    kd_root->leaf = 0;
-    kd_root->n = n;
-    kd_root->features = features;
-    kd_root->right = kd_root->left = NULL;
+	assign_split(points, n, d, &split, &value);
+	partition_points(points, n, d, split, value);
+
+    kd_root->point = points[n/2];
+    kd_root->split = split;
+    kd_root->left = kd_tree_build(points, n/2, d);
+    kd_root->right = kd_tree_build(points + n/2 + 1, n - n/2 - 1, d);
 
     return kd_root;
 }
 
-void expand_kd_tree(kd_node* kd_root)
+void assign_split(point* points, int n, int d, int* split, double* value)
 {
-    if ( kd_root->n == 1 || kd_root->n == 0 ) {
-        kd_root->leaf = 1;
-        return ;
-    }
-
-    assign_partition_key(kd_root);
-    partition_features(kd_root);
-
-    if (kd_root->left)
-        expand_kd_tree(kd_root->left);
-    if (kd_root->right)
-        expand_kd_tree(kd_root->right);
-}
-
-void assign_partition_key(kd_node* kd_root)
-{
-    int i, j, n, d;
-    int ki, kv;
-    double mean, var, max_var = 0;
-    feature *features;
-    double *tmp;
-
-    n = kd_root->n;
-    features = kd_root->features;
-    d = features[0].d;
+	int i, j;
+	double mean, var, max_var = -1;
+	double *tmp;
 
     for (j = 0; j < d; j++) {
         mean = var = 0;
         /* mean */
         for (i = 0; i < n; i++) {
-            mean += features[i].descr[j];
+            mean += points[i].v[j];
         }
         mean /= n;
         /* variance */
         for (i = 0; i < n; i++) {
-            var += SQUARE(features[i].descr[j] - mean);
+            var += SQUARE(points[i].v[j] - mean);
         }
         var /= n;
-        /* ki */
+        /* split */
         if (max_var < var) {
             max_var = var;
-            ki = j;
+            *split = j;
         }
     }
 
-    /* kv */
+    /* value */
     tmp = (double*)malloc(n*sizeof(double));
     for (i = 0; i < n; i++) {
-        tmp[i] = features[i].descr[ki];
+        tmp[i] = points[i].v[*split];
     }
-    kv = randomized_select(tmp, n, n/2);
+    *value = randomized_select(tmp, n, n/2);
     free(tmp);
-
-    kd_root->ki = ki;
-    kd_root->kv = kv;
 }
 
-void partition_features(kd_node* kd_root)
+void partition_points(point* points, int n, int d, int split, double value)
 {
-    int i, j, n, med, ki, p;
-    double kv;
-    feature tmp, *features;
-
-    features = kd_root->features;
-    n = kd_root->n;
-    ki = kd_root->ki;
-    kv = kd_root->kv;
+    int i, j, med, p;
+    point tmp;
 
     for (i = 0, j = -1 ; i < n; i++) {
-        if (features[i].descr[ki] <= kv) {
+        if (points[i].v[split] <= value) {
             j++;
-            tmp = features[i];
-            features[i] = features[j];
-            features[j] = tmp;
-            if (features[j].descr[ki] == kv)
+            tmp = points[i];
+            points[i] = points[j];
+            points[j] = tmp;
+            if (points[j].v[split] == value)
                 p = j;
         }
     }
 
-    tmp = features[p];
-    features[p] = features[j];
-    features[j] = tmp;
-    
-    if (j)
-        kd_root->left = init_kd_node(features, j);
-    if (n-j-1)
-        kd_root->right = init_kd_node(features+j+1, n-j-1);
+    tmp = points[p];
+    points[p] = points[j];
+    points[j] = tmp;
 }
 
 /********************************************************************************/

@@ -21,28 +21,24 @@ void test_kd_tree(int argc, char **argv)
 {
     int n = 6;
     double a[6][2] = {{2,3}, {5,4}, {9,6}, {4,7}, {8,1}, {7,2}};
-    feature *features;
+    point *points;
     kd_node *kd_root;
     int i, j;
 
-    features = (feature*)malloc(n*sizeof(feature));
+    points = (point*)malloc(n*sizeof(point));
     for (i = 0; i < n; i++) {
-        features[i].descr[0] = a[i][0];
-        features[i].descr[1] = a[i][1];
-        features[i].d = 2;
+        points[i].v[0] = a[i][0];
+        points[i].v[1] = a[i][1];
     }
 
-    kd_root = kd_tree_build(features, n);
+    kd_root = kd_tree_build(points, n, 2);
     test_kd_tree_print(kd_root, 1);
     kd_tree_free(kd_root);
 }
 
 void test_kd_tree_print(kd_node* kd_root, int level) 
 {
-    feature feature;
-    feature = kd_root->features[kd_root->n/2];
-    printf("lv:%d, point:(%lf, %lf)\n", level, feature.descr[0], feature.descr[1]);
-    // printf("n=%d,ki=%d,kv=%lf,leaf=%d\n",kd_root->n, kd_root->ki, kd_root->kv, kd_root->leaf);
+    printf("lv:%d, point:(%lf, %lf), split=%d\n", level, kd_root->point.v[0], kd_root->point.v[1], kd_root->split);
     if (kd_root->left)
         test_kd_tree_print(kd_root->left, level+1);
     if (kd_root->right)
