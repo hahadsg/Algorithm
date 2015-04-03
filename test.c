@@ -31,6 +31,7 @@ void test_kd_tree(int argc, char **argv)
     point *points, p;
     kd_node *kd_root;
     int i, j;
+    int d = 2;
 
     points = (point*)malloc(n*sizeof(point));
     for (i = 0; i < n; i++) {
@@ -44,9 +45,14 @@ void test_kd_tree(int argc, char **argv)
     test_kd_tree_print(kd_root, 1, 'h');
 
     // insert
-    p.v[0] = 5;
-    p.v[1] = 3;
-    kd_tree_insert(kd_root, &p, 2);
+    // p.v[0] = 5;
+    // p.v[1] = 3;
+    // kd_tree_insert(kd_root, &p, 2);
+    // printf("----- kd_tree(a) -----\n");
+    // test_kd_tree_print(kd_root, 1, 'h');
+
+    // delete
+    kd_root = kd_tree_delete(kd_root, 2);
     printf("----- kd_tree(a) -----\n");
     test_kd_tree_print(kd_root, 1, 'h');
 

@@ -16,5 +16,6 @@ typedef struct kd_node {
 kd_node* kd_tree_build(point* points, int n, int d);
 void kd_tree_free(kd_node* kd_root);
 void kd_tree_insert(kd_node* kd_root, point* point, int d);
+kd_node* kd_tree_delete(kd_node* kd_root, int d);
 
 #endif
