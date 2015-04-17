@@ -6,6 +6,8 @@
 #include "src/kd_tree.h"
 #include "src/queue.h"
 
+/* randomized select */
+void test_randomized_select(int argc, char **argv);
 /* kd_tree */
 void test_kd_tree(int argc, char **argv);
 void test_kd_tree_print(kd_node* kd_root, int level, char c);
@@ -36,12 +38,6 @@ void test_queue(int argc, char **argv)
     queue_push(q, &b);
     test_queue_print(q);
     queue_push(q, &c);
-    test_queue_print(q);
-    queue_pop(q);
-    test_queue_print(q);
-    queue_pop(q);
-    test_queue_print(q);
-    queue_pop(q);
     test_queue_print(q);
     queue_pop(q);
     test_queue_print(q);
@@ -105,3 +101,15 @@ void test_kd_tree_print(kd_node* kd_root, int level, char c)
         test_kd_tree_print(kd_root->right, level+1, 'r');
 }
 
+
+/********************************************************************************/
+/* randomized_select */
+/********************************************************************************/
+void test_randomized_select(int argc, char **argv) 
+{
+    double a[10] = {9,8,7,6,5,4,3,2,1,0};
+    double med;
+
+    med = randomized_select(a, 10, 5);
+    printf("med:%lf\n", med);
+}
