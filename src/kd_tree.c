@@ -1,11 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 
 #include "kd_tree.h"
 #include "randomized_select.h"
 #include "queue.h"
 
-#define SQUARE(x) ((x)*(x))
+#define SQUARE(x) ( (x) * (x) )
+#define DIST(x, y) ( SQUARE( ((x).v[0]) - ((y).v[0]) ) + SQUARE( ((x).v[1]) - ((y).v[1]) ) )
 
 void assign_split(point* points, int n, int d, int* split, double* value);
 void partition_points(point* points, int n, int d, int split, double value);
@@ -249,9 +251,39 @@ kd_node* find_min_node(kd_node* kd_root, int d, int split, kd_node** parent_node
 
 int same_2d_point(point a, point b)
 {
-    if ( a.v[0] == b.v[0] && a.v[1] == b.v[1] )
-        return 1;
-    return 0;
+    return a.v[0] == b.v[0] && a.v[1] == b.v[1];
 }
 
+void kd_tree_find_closest(kd_node* kd_root, point* target, point* res, double* min_dist)
+{
+    double dist;
+    int s;
 
+    if ( kd_root == NULL ) {
+        return ;
+    }
+
+    dist = DIST( kd_root->point, *target );
+    if ( *min_dist < 0 || *min_dist > dist ) {
+        *res = kd_root->point;
+        *min_dist = dist;
+    }
+
+    s = kd_root->split;
+    if ( target->v[s] < kd_root->point.v[s] ) {
+        kd_tree_find_closest(kd_root->left, target, res, min_dist);
+    } else {
+        kd_tree_find_closest(kd_root->right, target, res, min_dist);
+    }
+
+    if ( fabs( kd_root->point.v[s] - target->v[s] ) >= *min_dist ) {
+        return ;
+    }
+
+    if ( target->v[s] < kd_root->point.v[s] ) {
+        kd_tree_find_closest(kd_root->right, target, res, min_dist);
+    } else {
+        kd_tree_find_closest(kd_root->left, target, res, min_dist);
+    }
+
+}

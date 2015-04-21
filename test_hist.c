@@ -14,6 +14,9 @@ void test_kd_tree_print(kd_node* kd_root, int level, char c);
 /* queue */
 void test_queue(int argc, char **argv);
 void test_queue_print(queue *q);
+/* stack */
+void test_stack(int argc, char **argv);
+void test_stack_print(stack *a);
 
 /********************************************************************************/
 /* main */
@@ -21,6 +24,38 @@ void test_queue_print(queue *q);
 int main(int argc, char **argv)
 {
     return 0;
+}
+
+/********************************************************************************/
+/* stack */
+/********************************************************************************/
+void test_stack(int argc, char **argv)
+{
+    stack *s;
+    int data[3] = {1,2,3};
+    int n = 3, i;
+
+    s = stack_create();
+    test_stack_print(s);
+    for (i = 0; i < n; i++) {
+        stack_push(s, (void*)(data+i) );
+        test_stack_print(s);
+    }
+    for (i = 0; i < n+1; i++) {
+        printf("top: %d\n", *(int*)stack_top(s));
+        printf("pop: %d\n", *(int*)stack_pop(s));
+        test_stack_print(s);
+    }
+}
+
+void test_stack_print(stack *s)
+{
+    int i;
+    printf("pos: %d ; len: %d ; a: %p\n", s->pos, s->len, s->a);
+    for (i = 0; i < s->pos; i++) {
+        printf("%d, ", *(int*)(s->a[i]));
+    }
+    printf("\n");
 }
 
 /********************************************************************************/

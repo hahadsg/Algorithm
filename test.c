@@ -9,49 +9,14 @@
 /* kd_tree */
 void test_kd_tree(int argc, char **argv);
 void test_kd_tree_print(kd_node* kd_root, int level, char c);
-/* stack */
-void test_stack(int argc, char **argv);
-void test_stack_print(stack *a);
 
 /********************************************************************************/
 /* main */
 /********************************************************************************/
 int main(int argc, char **argv)
 {
-    test_stack(argc, argv);
+    test_kd_tree(argc, argv);
     return 0;
-}
-
-/********************************************************************************/
-/* stack */
-/********************************************************************************/
-void test_stack(int argc, char **argv)
-{
-    stack *s;
-    int data[3] = {1,2,3};
-    int n = 3, i;
-
-    s = stack_create();
-    test_stack_print(s);
-    for (i = 0; i < n; i++) {
-        stack_push(s, (void*)(data+i) );
-        test_stack_print(s);
-    }
-    for (i = 0; i < n+1; i++) {
-        printf("top: %d\n", *(int*)stack_top(s));
-        printf("pop: %d\n", *(int*)stack_pop(s));
-        test_stack_print(s);
-    }
-}
-
-void test_stack_print(stack *s)
-{
-    int i;
-    printf("pos: %d ; len: %d ; a: %p\n", s->pos, s->len, s->a);
-    for (i = 0; i < s->pos; i++) {
-        printf("%d, ", *(int*)(s->a[i]));
-    }
-    printf("\n");
 }
 
 /********************************************************************************/
@@ -61,7 +26,8 @@ void test_kd_tree(int argc, char **argv)
 {
     int n = 6;
     double a[6][2] = {{2,3}, {5,4}, {9,6}, {4,7}, {8,1}, {7,2}};
-    point *points, p;
+    point *points, p, res;
+    double min_dist;
     kd_node *kd_root;
     int i, j;
     int d = 2;
@@ -85,9 +51,16 @@ void test_kd_tree(int argc, char **argv)
     // test_kd_tree_print(kd_root, 1, 'h');
 
     // delete
-    kd_root = kd_tree_delete(kd_root, 2);
-    printf("----- kd_tree(a) -----\n");
-    test_kd_tree_print(kd_root, 1, 'h');
+    // kd_root = kd_tree_delete(kd_root, 2);
+    // printf("----- kd_tree(a) -----\n");
+    // test_kd_tree_print(kd_root, 1, 'h');
+
+    // find closest
+    p.v[0] = 6;
+    p.v[1] = 5;
+    min_dist = -1;
+    kd_tree_find_closest(kd_root, &p, &res, &min_dist);
+    printf("point(%lf, %lf) -> point(%lf, %lf), min_dist=%lf\n", p.v[0], p.v[1], res.v[0], res.v[1], min_dist);
 
     // free
     kd_tree_free(kd_root);
@@ -101,4 +74,5 @@ void test_kd_tree_print(kd_node* kd_root, int level, char c)
     if (kd_root->right)
         test_kd_tree_print(kd_root->right, level+1, 'r');
 }
+
 
