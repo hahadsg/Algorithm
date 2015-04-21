@@ -28,23 +28,20 @@ int main(int argc, char **argv)
 void test_queue(int argc, char **argv)
 {
     queue *q;
-    int a = 1, b = 2, c = 3;
+    int data[3] = {1,2,3};
+    int n = 3, i;
+
     q = queue_create();
     test_queue_print(q);
-    queue_push(q, &a);
-    test_queue_print(q);
-    queue_push(q, &b);
-    test_queue_print(q);
-    queue_push(q, &c);
-    test_queue_print(q);
-    queue_pop(q);
-    test_queue_print(q);
-    queue_pop(q);
-    test_queue_print(q);
-    queue_pop(q);
-    test_queue_print(q);
-    queue_pop(q);
-    test_queue_print(q);
+    for (i = 0; i < n; i++) {
+        queue_push(q, (void*)(data+i) );
+        test_queue_print(q);
+    }
+    for (i = 0; i < n+1; i++) {
+        printf("top: %d\n", *(int*)queue_top(q));
+        printf("pop: %d\n", *(int*)queue_pop(q));
+        test_queue_print(q);
+    }
 }
 
 void test_queue_print(queue *q)
