@@ -3,6 +3,7 @@
 
 #include "kd_tree.h"
 #include "randomized_select.h"
+#include "queue.h"
 
 #define SQUARE(x) ((x)*(x))
 

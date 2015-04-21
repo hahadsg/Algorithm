@@ -4,52 +4,52 @@
 
 #include "src/randomized_select.h"
 #include "src/kd_tree.h"
-#include "src/queue.h"
+#include "src/stack.h"
 
 /* kd_tree */
 void test_kd_tree(int argc, char **argv);
 void test_kd_tree_print(kd_node* kd_root, int level, char c);
-/* queue */
-void test_queue(int argc, char **argv);
-void test_queue_print(queue *q);
+/* stack */
+void test_stack(int argc, char **argv);
+void test_stack_print(stack *a);
 
 /********************************************************************************/
 /* main */
 /********************************************************************************/
 int main(int argc, char **argv)
 {
-    test_queue(argc, argv);
+    test_stack(argc, argv);
     return 0;
 }
 
 /********************************************************************************/
-/* queue */
+/* stack */
 /********************************************************************************/
-void test_queue(int argc, char **argv)
+void test_stack(int argc, char **argv)
 {
-    queue *q;
+    stack *s;
     int data[3] = {1,2,3};
     int n = 3, i;
 
-    q = queue_create();
-    test_queue_print(q);
+    s = stack_create();
+    test_stack_print(s);
     for (i = 0; i < n; i++) {
-        queue_push(q, (void*)(data+i) );
-        test_queue_print(q);
+        stack_push(s, (void*)(data+i) );
+        test_stack_print(s);
     }
     for (i = 0; i < n+1; i++) {
-        printf("top: %d\n", *(int*)queue_top(q));
-        printf("pop: %d\n", *(int*)queue_pop(q));
-        test_queue_print(q);
+        printf("top: %d\n", *(int*)stack_top(s));
+        printf("pop: %d\n", *(int*)stack_pop(s));
+        test_stack_print(s);
     }
 }
 
-void test_queue_print(queue *q)
+void test_stack_print(stack *s)
 {
     int i;
-    printf("first: %d ; last: %d ; len: %d ; a: %p\n", q->first, q->last, q->len, q->a);
-    for (i = q->first; i < q->last; i++) {
-        printf("%d, ", *(int*)(q->a[i]));
+    printf("pos: %d ; len: %d ; a: %p\n", s->pos, s->len, s->a);
+    for (i = 0; i < s->pos; i++) {
+        printf("%d, ", *(int*)(s->a[i]));
     }
     printf("\n");
 }
