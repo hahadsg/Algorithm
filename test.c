@@ -1,14 +1,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <string.h>
 
 #include "src/randomized_select.h"
 #include "src/kd_tree.h"
-#include "src/stack.h"
+#include "src/heap.h"
 
 /* kd_tree */
 void test_kd_tree(int argc, char **argv);
 void test_kd_tree_print(kd_node* kd_root, int level, char c);
+/* cmp */
+int cmp_int(const void *a, const void *b); 
 
 /********************************************************************************/
 /* main */
@@ -17,6 +20,14 @@ int main(int argc, char **argv)
 {
     test_kd_tree(argc, argv);
     return 0;
+}
+
+/********************************************************************************/
+/* cmp */
+/********************************************************************************/
+int cmp_int(const void *a, const void *b) 
+{
+    return *(int*)a - *(int*)b;
 }
 
 /********************************************************************************/

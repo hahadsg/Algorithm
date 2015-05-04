@@ -17,6 +17,9 @@ void test_queue_print(queue *q);
 /* stack */
 void test_stack(int argc, char **argv);
 void test_stack_print(stack *a);
+/* heap */
+void test_heap(int argc, char **argv);
+void test_heap_print(heap *h);
 
 /********************************************************************************/
 /* main */
@@ -24,6 +27,38 @@ void test_stack_print(stack *a);
 int main(int argc, char **argv)
 {
     return 0;
+}
+
+/********************************************************************************/
+/* heap */
+/********************************************************************************/
+void test_heap(int argc, char **argv)
+{
+    int a[9] = {1,2,3,4,5,6,7,8,9};
+    heap *h;
+    int i, n = 9;
+
+    h = heap_create(cmp_int);
+    // test_heap_print(h);
+    for (i = 0; i < n; i++) {
+        heap_push(h, a+i);
+        // test_heap_print(h);
+    }
+    test_heap_print(h);
+    for (i = 0; i <= n; i++) {
+        printf("pop : %d\n", *(int*)(heap_pop(h)));
+        test_heap_print(h);
+    }
+}
+
+void test_heap_print(heap *h)
+{
+    int i;
+    printf("len: %d ; ml: %d\n", h->len, h->ml);
+    for (i = 1; i <= h->len; i++) {
+        printf("%d, ", *(int*)(h->a[i]));
+    }
+    printf("\n");
 }
 
 /********************************************************************************/
